@@ -1,3 +1,5 @@
 # IDE settings and metadata #
 #############################
 /.idea/
+/config/
+/courses/
