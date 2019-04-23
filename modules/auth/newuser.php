@@ -197,9 +197,16 @@ if (!isset($submit)) {
 	} else {
 		$password_encrypted = $password;
 	}
+
+	//Escaping special chars
+	$uname_val = htmlspecialchars($uname, ENT_QUOTES, 'UTF-8');
+	$nom_form_val = htmlspecialchars($nom_form, ENT_QUOTES, 'UTF-8');
+	$prenom_form_val = htmlspecialchars($prenom_form, ENT_QUOTES, 'UTF-8');
+	$department_val = htmlspecialchars($department, ENT_QUOTES, 'UTF-8');
+	$am_val = htmlspecialchars($am, ENT_QUOTES, 'UTF-8');
 	$q1 = "INSERT INTO `$mysqlMainDb`.user
 	(user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
-	VALUES ('NULL', '$nom_form', '$prenom_form', '$uname', '$password_encrypted', '$email','5',
+	VALUES ('NULL', '$nom_form_val', '$prenom_form_val', '$uname', '$password_encrypted', '$email','5',
 		'$department','$am',".$registered_at.",".$expires_at.",'$lang')";
 	$inscr_user = mysql_query($q1);
 	$last_id = mysql_insert_id();
