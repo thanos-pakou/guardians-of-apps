@@ -99,7 +99,8 @@ if (isset($_GET['store']) && $is_adminOfCourse) {
 if (isset($chatLine) and trim($chatLine) != '') {
 	$fchat = fopen($fileChatName,'a');
 	$chatLine = mathfilter($chatLine, 12, '../../courses/mathimg/');
-	fwrite($fchat,$timeNow.' - '.$nick.' : '.stripslashes($chatLine)."\n");
+	// Added htmlspecialchars to prevent malicious user to do xss attack on chat
+	fwrite($fchat,$timeNow.' - '.$nick.' : '.stripslashes(htmlspecialchars($chatLine, ENT_QUOTES, 'UTF-8'))."\n");
 	fclose($fchat);
 }
 
