@@ -167,9 +167,13 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
 			// set title
 			$dropbox_title = $dropbox_filename;
 			$format = get_file_extension($dropbox_filename);
-                	$dropbox_filename = safe_filename($format);
-			// Transform any .php file in .phps fo security
-			// $dropbox_filename = php2phps ($dropbox_filename);
+			$dropbox_filename = safe_filename($format);
+			// saves the file extension
+			$file_type = pathinfo($dropbox_filename, PATHINFO_EXTENSION);
+			// if file is php or html changes extension to phps or htmls
+			if ($file_type == 'php' || $file_type == 'html') {
+				$dropbox_filename = substr_replace($dropbox_filename, $dropbox_filename . 's', $file_type);
+			}
 			// set author
 			if ($_POST['authors'] == '')
 			{
