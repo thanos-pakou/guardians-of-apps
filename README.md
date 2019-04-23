@@ -16,6 +16,15 @@
 
 
 ## Vulnerabilities
+* #### Τηλεσυνεργασία
+  
+  * Vulnerability 
+  * Defence
+  
+  
+* #### Ανταλλαγή αρχείων 
+  * Vulnerability 
+  * Defence
 
 ### Τηλεσυνεργασία 
 
@@ -86,8 +95,58 @@
   
 #### Vulnerability
 
-  [index.php(dropbox)](modules/dropbox/index.php)
-     
+  [index.php(dropbox)](modules/dropbox/index.php) ```file exchange```
+  
+  A malicious user can upload a file in this php page.
   ![](progress-images/upload-files-1.png)
      
+  If the malicious user finds the path to the uploaded file he can run whatever he wants from the inside
+  of our server.
   ![](progress-images/upload-files-2.png)
+  
+  [index.php(dropbox)](modules/dropbox/index.php) redirects to [dropbox_submit.php](modules/dropbox/dropbox_submit.php)
+  with this form: 
+  ```
+  <form method="post" action="dropbox_submit.php" enctype="multipart/form-data" onsubmit="return checkForm(this)">
+  tCont2;
+  	$tool_content .= "
+      <table width='99%' class='FormData'>
+      <tbody>
+      <tr>
+        <th class='left' width='220'>&nbsp;</th>
+        <td><b>".$dropbox_lang["uploadFile"]."</b></td>
+      </tr>
+      <tr>
+        <th class='left'>".$dropbox_lang['file']." :</th>
+        <td><input type='file' name='file' size='35' />
+            <input type='hidden' name='dropbox_unid' value='$dropbox_unid' />
+        </td>
+   ...
+   ...
+   ```
+   
+   Then it uses this code to set the name of the file:
+   ```
+   $dropbox_title = $dropbox_filename;
+   $format = get_file_extension($dropbox_filename);
+   $dropbox_filename = safe_filename($format);
+   // Transform any .php file in .phps fo security
+   // $dropbox_filename = php2phps ($dropbox_filename);
+   ```
+   
+   #### Defence
+   
+   We can check the file's extension and if the file is php or html type then we add an "s" to the extension
+   (htmls, phps) so the malicious user cannot run php or a script inside our server.
+   
+   ```
+   $dropbox_title = $dropbox_filename;
+   $format = get_file_extension($dropbox_filename);
+   $dropbox_filename = safe_filename($format);
+   // saves the file extension
+   $file_type = pathinfo($dropbox_filename, PATHINFO_EXTENSION);
+   // if file is php or html changes extension to phps or htmls
+   if ($file_type == 'php' || $file_type == 'html') {
+       $dropbox_filename = substr_replace($dropbox_filename, $dropbox_filename . 's', $file_type);
+   }
+   ```
