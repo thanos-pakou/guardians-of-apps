@@ -140,17 +140,26 @@ $registration_errors = array();
                     }
             }
 
+            // Escape special chars
+            $prenom_form_val = htmlspecialchars($prenom_form, ENT_QUOTES, 'UTF-8');
+            $nom_form_val = htmlspecialchars($nom_form, ENT_QUOTES, 'UTF-8');
+            $uname_val = htmlspecialchars($uname, ENT_QUOTES, 'UTF-8');
+            $department_val = htmlspecialchars($department, ENT_QUOTES, 'UTF-8');
+            $userphone_val = htmlspecialchars($userphone, ENT_QUOTES, 'UTF-8');
+            $usercomment_val = htmlspecialchars($usercomment, ENT_QUOTES, 'UTF-8');
+
+
             db_query('INSERT INTO prof_request SET
-                                profname = ' . autoquote($prenom_form). ',
-                                profsurname = ' . autoquote($nom_form). ',
-                                profuname = ' . autoquote($uname). ',
+                                profname = ' . autoquote($prenom_form_val). ',
+                                profsurname = ' . autoquote($nom_form_val). ',
+                                profuname = ' . autoquote($uname_val). ',
                                 profemail = ' . autoquote($email_form). ',
-                                proftmima = ' . autoquote($department). ',
-                                profcomm = ' . autoquote($userphone). ',
+                                proftmima = ' . autoquote($department_val). ',
+                                profcomm = ' . autoquote($userphone_val). ',
                                 status = 1,
                                 statut = 1,
                                 date_open = NOW(),
-                                comment = ' . autoquote($usercomment). ',
+                                comment = ' . autoquote($usercomment_val). ',
                                 lang = ' . autoquote($proflang),
                      $mysqlMainDb);
 
