@@ -32,6 +32,7 @@
     This script is intened to be used by unlogged users (visitors)
 ==============================================================================*/
 
+$tok = $_SESSION['token'];
 $require_current_course = FALSE;
 
 $nameTools = $langSearch;
@@ -73,6 +74,7 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
           <th>&nbsp;</th>
 		  <td colspan=2><input type=\"Submit\" name=\"submit\" value=\"$langDoSearch\" />&nbsp;&nbsp;<input type=\"Reset\" name=\"reset\" value=\"$langNewSearch\" /></td>
 		</tr>
+		<input type=\"hidden\"  name=\"token\" value=\"$tok\">
         <tbody>
         </table>
     </form>";
@@ -84,6 +86,14 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
 		 emfanish arikown mhnymatwn anazhthshs
 ***********************************************************************************************/
 
+    // Validate token before submitting
+    if ($_SESSION['token']!=$_POST['token'] && $_POST['token'] != null) {
+        ?>
+        <script type="text/javascript">
+            window.location.href = 'http://guardiansofapps.csec.gr/index.php?logout=yes';
+        </script>
+        <?php
+    }
 	//to pedio visible exei times 2 kai 1 gia Public kai Open mathimata
 	$result = mysql_query("SELECT * FROM cours WHERE visible='2' OR visible='1'");
 

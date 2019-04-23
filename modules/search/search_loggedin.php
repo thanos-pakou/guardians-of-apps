@@ -35,6 +35,7 @@
     This script is intened to be used by logged-in users (students/adminsitrators)
 ==============================================================================*/
 
+$tok = $_SESSION['token'];
 $require_current_course = FALSE;
 
 $nameTools = $langSearch;
@@ -43,6 +44,7 @@ $tool_content = "";
 
 //elegxos ean *yparxoun* oroi anazhthshs
 if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_terms_instructor) && empty($search_terms_coursecode)) {
+
 /**********************************************************************************************
 		emfanish formas anahzthshs ean oi oroi anazhthshs einai kenoi
 ***********************************************************************************************/
@@ -78,8 +80,10 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
 	  <th>&nbsp;</th>
 	  <td colspan=2><input type=\"Submit\" name=\"submit\" value=\"$langDoSearch\" />&nbsp;&nbsp;<input type=\"Reset\" name=\"reset\" value=\"$langNewSearch\" /></td>
 	</tr>
+	<input type=\"hidden\"  name=\"token\" value=\"$tok\">
     </tbody>
     </table>
+    
     </form>";
 
 }else
@@ -88,7 +92,14 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
 	ektelesh anazhthshs afou yparxoun oroi anazhthshs
 	 emfanish arikown mhnymatwn anazhthshs
 ***********************************************************************************************/
-
+	// Validate token before submitting
+	if ($_SESSION['token']!=$_POST['token'] && $_POST['token'] != null) {
+		?>
+	<script type="text/javascript">
+		window.location.href = 'http://guardiansofapps.csec.gr/index.php?logout=yes';
+	</script>
+	<?php
+	}
 	//ektelesh erwthmatos gia to se poia mathimata einai eggegramenos o xrhsths. sta apotelesmata perilamvanontai
 	//kai ola ta anoixta kai anoixta me eggrafh mathimata.
 
