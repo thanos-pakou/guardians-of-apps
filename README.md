@@ -17,9 +17,9 @@
 
 ## Vulnerabilities
 
-* ###Τηλεσυνεργασία 
+###Τηλεσυνεργασία 
 
-   ####Vulnerability
+####Vulnerability
   [conference.php](modules/conference/conference.php) ```e-cooperation```
   
   ![](progress-images/e-cooperation.png)
@@ -67,7 +67,7 @@
   
   In this case malicious users can XSS attack using a script.
   
-  ####Defence
+####Defence
   
   We can use htmlspecialchars to prevent malicious scripts being saved as data.
   
@@ -82,11 +82,12 @@
   }
   ```
   
-  * ###Ανταλλαγή αρχείων 
+###Ανταλλαγή αρχείων 
   
-     ####Vulnerability
-     [index.php(dropbox)](modules/dropbox/index.php)
+####Vulnerability
+
+  [index.php(dropbox)](modules/dropbox/index.php)
      
-     ![](progress-images/upload-files-1.png)
+  ![](progress-images/upload-files-1.png)
      
-     ![](progress-images/upload-files-2.png)
+  ![](progress-images/upload-files-2.png)
