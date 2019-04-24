@@ -47,16 +47,7 @@ if (!isset($fc)) {
 }
 // security check
 $fc = intval($fc);
-
-//Prepared statement for department
-$conn = new PDO("mysql:host=$mysqlServer;dbname=$mysqlMainDb;charset=utf8",$mysqlUser,$mysqlPassword);
-$conn->exec("set names utf8");
-$stmt = $conn->prepare("SELECT name FROM faculte WHERE id = :fc");
-$stmt->bindParam(":fc", $fc);
-$stmt->execute();
-
-$fac = $stmt->fetch();
-echo $fac[0 ];
+$fac = mysql_fetch_row(mysql_query("SELECT name FROM faculte WHERE id = " . $fc));
 if (!($fac = $fac[0])) {
     die("ERROR: no faculty with id $fc");
 }

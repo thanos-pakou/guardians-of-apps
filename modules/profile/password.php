@@ -92,12 +92,8 @@ if (isset($submit) && isset($changePass) && ($changePass == "do")) {
 
 	if($old_pass == $old_pass_db) {
 
-		//Prepared statement for sql injection
-		$conn = new PDO("mysql:host=$mysqlServer;dbname=$mysqlMainDb;charset=utf8",$mysqlUser,$mysqlPassword);
-		$conn->exec("set names utf8");
-		$stmt = $conn->prepare("UPDATE `user` SET `password` = :new_pass WHERE `user_id` = ".$_SESSION['uid']."");
-		$stmt->bindParam(":new_pass", $new_pass);
-		$stmt->execute();
+        $sql = "UPDATE `user` SET `password` = '$new_pass' WHERE `user_id` = ".$_SESSION["uid"]."";			//Prepared statement for sql injection
+        db_query($sql, $mysqlMainDb);
 
 		header("location:". $passurl."?msg=4");
 		exit();

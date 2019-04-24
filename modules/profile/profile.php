@@ -103,23 +103,11 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
         $persoStatus_val = htmlspecialchars($persoStatus, ENT_QUOTES, 'UTF-8');
 
 
-        //Prepared statement for sql injection
-        $conn = new PDO("mysql:host=$mysqlServer;dbname=$mysqlMainDb;charset=utf8",$mysqlUser,$mysqlPassword);
-	    $conn->exec("set names utf8");
-	    $stmt = $conn->prepare("UPDATE user
-	        SET nom= :nom_form_val, prenom= :prenom_form_val,
-	        username= :username_form_val, email= :email_form, am= :am_val,
-	            perso= :persoStatus_val, lang='$langcode'
-	        WHERE user_id='".$_SESSION["uid"]."'");
-        $stmt->bindParam(":nom_form_val", $nom_form_val);
-        $stmt->bindParam(":prenom_form_val", $prenom_form_val);
-        $stmt->bindParam(":username_form_val", $username_form_val);
-        $stmt->bindParam(":email_form", $email_form);
-        $stmt->bindParam(":am_val", $am_val);
-        $stmt->bindParam(":persoStatus_val", $persoStatus_val);
-        $stmt->execute();
-
-		if($stmt->fetch()) {
+        if(mysql_query("UPDATE user
+	        SET nom='$nom_form', prenom='$prenom_form',
+	        username='$username_form', email='$email_form', am='$am_form',
+	            perso='$persoStatus', lang='$langcode'
+	        WHERE user_id='".$_SESSION["uid"]."'")) {
 			if (isset($_SESSION['user_perso_active']) and $persoStatus == "no") {
                 		unset($_SESSION['user_perso_active']);
 			}
@@ -136,7 +124,7 @@ if (isset($submit) && isset($ldap_submit) && ($ldap_submit == "ON")) {
 
 	mysql_query("UPDATE user SET perso = '$persoStatus',
 		lang = '$langcode' WHERE user_id='".$_SESSION["uid"]."' ");
-	
+
 	if (isset($_SESSION['user_perso_active']) and $persoStatus == "no") {
 		unset($_SESSION['user_perso_active']);
 	}
@@ -262,7 +250,7 @@ if ((!isset($changePass)) || isset($_POST['submit'])) {
 	} else {
 		$tool_content .= "<td><input class='FormData_InputText' type=\"text\" size=\"40\" name=\"prenom_form\" value=\"$prenom_form\"></td>";
 	}
-	
+
 	$tool_content .= "</tr>
     <tr>
        <th class='left'>$langSurname</th>";
