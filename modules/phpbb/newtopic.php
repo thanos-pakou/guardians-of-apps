@@ -79,6 +79,12 @@ include("functions.php"); // application logic for phpBB
  * Actual code starts here
  *****************************************************************************/
 
+//Prepared Statement
+$conn = new PDO("mysql:host=$mysqlServer;",$mysqlUser,$mysqlPassword);
+$stmt = $conn->prepare("SELECT forum_name, forum_access, forum_type FROM forums
+	WHERE forum_id = :forum");
+$stmt->bindParam(':forum', $forum);
+$stmt->execute();
 $sql = "SELECT forum_name, forum_access, forum_type FROM forums
 	WHERE (forum_id = '$forum')";
 if (!$result = db_query($sql, $currentCourseID)) {
@@ -86,7 +92,7 @@ if (!$result = db_query($sql, $currentCourseID)) {
 	draw($tool_content, 2, 'phpbb', $head_content);
 	exit;
 }
-$myrow = mysql_fetch_array($result);
+$myrow = $stmt->fetchAll();
 $forum_name = $myrow["forum_name"];
 $forum_access = $myrow["forum_access"];
 $forum_type = $myrow["forum_type"];
