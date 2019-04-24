@@ -204,12 +204,25 @@ if (!isset($submit)) {
 	$prenom_form_val = htmlspecialchars($prenom_form, ENT_QUOTES, 'UTF-8');
 	$department_val = htmlspecialchars($department, ENT_QUOTES, 'UTF-8');
 	$am_val = htmlspecialchars($am, ENT_QUOTES, 'UTF-8');
-	$q1 = "INSERT INTO `$mysqlMainDb`.user
-	(user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
-	VALUES ('NULL', '$nom_form_val', '$prenom_form_val', '$uname', '$password_encrypted', '$email','5',
-		'$department','$am',".$registered_at.",".$expires_at.",'$lang')";
-	$inscr_user = mysql_query($q1);
-	$last_id = mysql_insert_id();
+
+	//Prepared statement for sql injection
+	$conn = new PDO("mysql:host=$mysqlServer;dbname=$mysqlMainDb;charset=utf8",$mysqlUser,$mysqlPassword);
+	$conn->exec("set names utf8");
+	$stmt = $conn->prepare("INSERT INTO `$mysqlMainDb`.user
+			(user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
+			VALUES ('NULL', :nom_form_val, :prenom_form_val, :uname_val, :password_encrypted, :email,'5',
+			:department,:am,".$registered_at.",".$expires_at.",'$lang')");
+	$stmt->bindParam(":nom_form_val", $nom_form_val);
+	$stmt->bindParam(":prenom_form_val", $prenom_form_val);
+	$stmt->bindParam(":uname_val", $uname_val);
+	$stmt->bindParam(":password_encrypted", $password_encrypted);
+	$stmt->bindParam(":email", $email);
+	$stmt->bindParam(":department", $department);
+	$stmt->bindParam(":am", $am);
+	$stmt->execute();
+
+	$inscr_user = $stmt->fetch();
+	$last_id = $conn->lastInsertId();
 	$result=mysql_query("SELECT user_id, nom, prenom FROM `$mysqlMainDb`.user WHERE user_id='$last_id'");
 	while ($myrow = mysql_fetch_array($result)) {
 		$uid=$myrow[0];
