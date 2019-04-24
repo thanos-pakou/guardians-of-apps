@@ -144,6 +144,16 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
      *     FORM SUBMIT : UPLOAD NEW FILE
      * --------------------------------------
      */
+
+	// Validate token before submitting
+	if ($_SESSION['token']!=$_POST['token'] && $_POST['token'] != null) {
+		?>
+		<script type="text/javascript">
+			window.location.href = 'http://guardiansofapps.csec.gr/index.php?logout=yes';
+		</script>
+		<?php
+	}
+
 	if (!$error) {
 		$cwd = getcwd();
 		if (is_dir($dropbox_cnf["sysPath"])) {

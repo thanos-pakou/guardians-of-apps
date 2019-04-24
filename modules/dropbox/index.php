@@ -36,6 +36,7 @@
  *
  */
 
+$tok = $_SESSION['token'];
 require_once("dropbox_init1.inc.php");
 $nameTools = $dropbox_lang["dropbox"];
 
@@ -131,6 +132,7 @@ tCont2;
       <th class='left'>".$dropbox_lang['file']." :</th>
       <td><input type='file' name='file' size='35' />
           <input type='hidden' name='dropbox_unid' value='$dropbox_unid' />
+          <input type=\"hidden\"  name=\"token\" value=\"$tok\">
       </td>
     </tr>";
 
