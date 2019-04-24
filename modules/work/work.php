@@ -294,7 +294,14 @@ function submit_work($id) {
 	$nav[] = array("url"=>"work.php?id=$id", "name"=> $row['title']);
 
   	if($submit_ok) { //only if passed the above validity checks...
-
+        // Validate token before submitting
+        if ($_SESSION['token']!=$_POST['token'] && $_POST['token'] != null) {
+            ?>
+            <script type="text/javascript">
+                window.location.href = 'http://guardiansofapps.csec.gr/index.php?logout=yes';
+            </script>
+            <?php
+        }
 	$msg1 = delete_submissions_by_uid($uid, -1, $id);
 
 	$local_name = greek_to_latin(uid_to_name($uid));
@@ -322,11 +329,13 @@ function submit_work($id) {
 				'$REMOTE_ADDR', '$filename','".$_FILES['userfile']['name'].
 				"', '$stud_comments', '$group_id')", $currentCourseID);
 		} else {
+		    // Escaping special chars for xss attack prevention
+            $stud_comments_val = htmlspecialchars($stud_comments, ENT_QUOTES, 'UTF-8');
 			db_query("INSERT INTO assignment_submit
 				(uid, assignment_id, submission_date, submission_ip, file_path,
 				file_name, comments) VALUES ('$uid','$id', NOW(), '$REMOTE_ADDR',
 				'$filename','".$_FILES['userfile']['name'].
-				"', '$stud_comments')", $currentCourseID);
+				"', '$stud_comments_val')", $currentCourseID);
 		}
 
 		$tool_content .="<p class='success_small'>$msg2<br />$msg1<br /><a href='work.php'>$langBack</a></p><br />";
@@ -605,6 +614,7 @@ function show_student_assignment($id)
 
 function show_submission_form($id)
 {
+    $tok = $_SESSION['token'];
 	global $tool_content, $m, $langWorkFile, $langSendFile, $langSubmit, $uid, $langNotice3;
 
 	if (is_group_assignment($id) and ($gid = user_group($uid))) {
@@ -634,6 +644,7 @@ function show_submission_form($id)
     <tr>
       <th>&nbsp;</th>
       <td><input type="submit" value="${langSubmit}" name="work_submit" /><br />$langNotice3</td>
+      <input type=\"hidden\"  name=\"token\" value=\"$tok\">
     </tr>
     </tbody>
     </table>
