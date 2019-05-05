@@ -1,4 +1,4 @@
-<?php session_start();
+<?php
 /*========================================================================
 *   Open eClass 2.3
 *   E-learning and Course Management System
@@ -32,6 +32,18 @@
  * is not logged in.
  *
  */
+
+/***************************************************************
+ *               Generates a token for CSRF prevention		               *
+ ****************************************************************
+ */
+
+session_start();
+$length = 32;
+$_SESSION['token'] = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $length);
+
+
+
 
 /***************************************************************
 *               HOME PAGE OF ECLASS		               *

@@ -32,6 +32,8 @@
  * @abstract Password change component
  *
  */
+$tok = $_SESSION['token'];
+
 $require_login = true;
 $helpTopic = 'Profile';
 $require_valid_uid = TRUE;
@@ -46,6 +48,14 @@ $tool_content = "";
 $passurl = $urlSecure.'modules/profile/password.php';
 
 if (isset($submit) && isset($changePass) && ($changePass == "do")) {
+	// Validate token before submitting
+	if ($_SESSION['token']!=$_POST['token'] && $_POST['token'] != null) {
+		?>
+		<script type="text/javascript">
+			window.location.href = 'http://guardiansofapps.csec.gr/index.php?logout=yes';
+		</script>
+		<?php
+	}
 
 	if (empty($_REQUEST['password_form']) || empty($_REQUEST['password_form1']) || empty($_REQUEST['old_pass'])) {
 		header("location:". $passurl."?msg=3");
@@ -82,8 +92,9 @@ if (isset($submit) && isset($changePass) && ($changePass == "do")) {
 
 	if($old_pass == $old_pass_db) {
 
-		$sql = "UPDATE `user` SET `password` = '$new_pass' WHERE `user_id` = ".$_SESSION["uid"]."";
-		db_query($sql, $mysqlMainDb);
+        $sql = "UPDATE `user` SET `password` = '$new_pass' WHERE `user_id` = ".$_SESSION["uid"]."";			//Prepared statement for sql injection
+        db_query($sql, $mysqlMainDb);
+
 		header("location:". $passurl."?msg=4");
 		exit();
 	} else {
@@ -149,6 +160,7 @@ if(isset($msg)) {
 if (!isset($changePass)) {
 	$tool_content .= "
 <form method=\"post\" action=\"$passurl?submit=yes&changePass=do\">
+  <input type=\"hidden\"  name=\"token\" value=\"$tok\">
   <table width=\"99%\">
   <tbody>
   <tr>

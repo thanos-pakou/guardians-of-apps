@@ -79,6 +79,7 @@ include("functions.php"); // application logic for phpBB
  * Actual code starts here
  *****************************************************************************/
 
+
 $sql = "SELECT forum_name, forum_access, forum_type FROM forums
 	WHERE (forum_id = '$forum')";
 if (!$result = db_query($sql, $currentCourseID)) {

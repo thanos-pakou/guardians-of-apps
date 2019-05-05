@@ -36,7 +36,7 @@
    	SELECT * FROM articles WHERE MATCH (title,body,more_fields) AGAINST ('database') OR ('Security') AND ('lala')
 ==============================================================================*/
 
-
+$tok = $_SESSION['token'];
 $require_current_course = TRUE;
 
 $guest_allowed = true;
@@ -72,6 +72,15 @@ $query .= "' IN BOOLEAN MODE)";
 
 //elegxos ean *yparxoun* oroi anazhthshs
 if(empty($or_search_terms) && empty($not_search_terms)) {
+
+	// Validate token before submitting
+	if ($_SESSION['token']!=$_POST['token'] && $_POST['token'] != null) {
+		?>
+		<script type="text/javascript">
+			window.location.href = 'http://guardiansofapps.csec.gr/index.php?logout=yes';
+		</script>
+		<?php
+	}
 /**********************************************************************************************
 	emfanish formas anahzthshs ean oi oroi anazhthshs einai kenoi
 ***********************************************************************************************/

@@ -24,6 +24,7 @@
 *  			eMail: info@openeclass.org
 * =========================================================================*/
 
+$tok = $_SESSION['token'];
 $require_help = TRUE;
 $require_login = true;
 $helpTopic = 'Profile';
@@ -78,12 +79,31 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 
 	// everything is ok
 	else {
+
+        // Validate token before submitting for CSRF attack
+        if ($_SESSION['token']!=$_POST['token'] && $_POST['token'] != null) {
+            ?>
+            <script type="text/javascript">
+                window.location.href = 'http://guardiansofapps.csec.gr/index.php?logout=yes';
+            </script>
+            <?php
+        }
 		##[BEGIN personalisation modification]############
 		$_SESSION['langswitch'] = $language = langcode_to_name($_REQUEST['userLanguage']);
 		$langcode = langname_to_code($language);
 
-		$username_form = escapeSimple($username_form);
-		if(mysql_query("UPDATE user
+        $username_form = escapeSimple($username_form);
+
+        //Escaping special chars for xss attack
+        $username_form_val = htmlspecialchars($username_form, ENT_QUOTES, 'UTF-8');
+        $nom_form_val = htmlspecialchars($nom_form, ENT_QUOTES, 'UTF-8');
+        $prenom_form_val = htmlspecialchars($prenom_form, ENT_QUOTES, 'UTF-8');
+        $department_val = htmlspecialchars($department, ENT_QUOTES, 'UTF-8');
+        $am_val = htmlspecialchars($am_form, ENT_QUOTES, 'UTF-8');
+        $persoStatus_val = htmlspecialchars($persoStatus, ENT_QUOTES, 'UTF-8');
+
+
+        if(mysql_query("UPDATE user
 	        SET nom='$nom_form', prenom='$prenom_form',
 	        username='$username_form', email='$email_form', am='$am_form',
 	            perso='$persoStatus', lang='$langcode'
@@ -104,7 +124,7 @@ if (isset($submit) && isset($ldap_submit) && ($ldap_submit == "ON")) {
 
 	mysql_query("UPDATE user SET perso = '$persoStatus',
 		lang = '$langcode' WHERE user_id='".$_SESSION["uid"]."' ");
-	
+
 	if (isset($_SESSION['user_perso_active']) and $persoStatus == "no") {
 		unset($_SESSION['user_perso_active']);
 	}
@@ -218,6 +238,7 @@ if ((!isset($changePass)) || isset($_POST['submit'])) {
 	$tool_content .= " <li><a href='../unreguser/unreguser.php'>$langUnregUser</a></li>";
 	$tool_content .= "</ul></div>";
 	$tool_content .= "<form method=\"post\" action=\"$sec?submit=yes\"><br/>
+    <input type=\"hidden\"  name=\"token\" value=\"$tok\">
     <table width=\"99%\">
     <tbody><tr>
        <th width=\"220\" class='left'>$langName</th>";
@@ -229,7 +250,7 @@ if ((!isset($changePass)) || isset($_POST['submit'])) {
 	} else {
 		$tool_content .= "<td><input class='FormData_InputText' type=\"text\" size=\"40\" name=\"prenom_form\" value=\"$prenom_form\"></td>";
 	}
-	
+
 	$tool_content .= "</tr>
     <tr>
        <th class='left'>$langSurname</th>";
